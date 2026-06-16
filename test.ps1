@@ -21,6 +21,8 @@ function Invoke-Checked {
 & (Join-Path $Root "build.ps1")
 New-Item -ItemType Directory -Force $GeneratedDir | Out-Null
 
+# Supported cases are golden tests: generated Go must match the expected file,
+# pass gofmt, and execute successfully with go run.
 $SupportedCases = @(
     "hello_print",
     "variables",
@@ -62,6 +64,8 @@ foreach ($Case in $SupportedCases) {
     Write-Host "PASS $Case"
 }
 
+# Syntax errors and unsupported-feature cases must fail clearly and must not
+# leave a generated Go file behind.
 $SyntaxInput = Join-Path $Root "tests\fixtures\syntax_error.java"
 $SyntaxOutput = Join-Path $GeneratedDir "syntax_error.go"
 $ErrorFile = Join-Path $GeneratedDir "syntax_error.stderr.txt"

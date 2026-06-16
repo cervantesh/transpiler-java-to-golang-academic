@@ -28,6 +28,9 @@ int main(int argc, char** argv) {
     }
 
     try {
+        /* Reject known unsupported Java features before parsing so the tool
+         * fails clearly instead of emitting partial or misleading Go.
+         */
         const auto diagnostics = jtg::detectUnsupportedFeatures(argv[1]);
         if (!diagnostics.empty()) {
             for (const auto& diagnostic : diagnostics) {
@@ -36,6 +39,7 @@ int main(int argc, char** argv) {
             return 1;
         }
 
+        /* Main pipeline: parse Java into AST, then generate deterministic Go. */
         auto program = jtg::parseJavaFile(argv[1]);
         const jtg::GoGenerator generator;
         writeFile(argv[2], generator.generate(*program));

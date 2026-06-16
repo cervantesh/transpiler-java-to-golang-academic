@@ -6,6 +6,9 @@
 
 namespace jtg {
 
+/* Target-neutral type description for the small Java subset.
+ * The parser records both the original Java spelling and the Go output type.
+ */
 struct TypeName {
     std::string javaName;
     std::string goName;
@@ -37,6 +40,9 @@ struct Expr : Node {
     ~Expr() override = default;
 };
 
+/* Expression nodes are intentionally minimal. They represent only constructs
+ * that the generator can emit deterministically as Go source.
+ */
 struct IntLiteralExpr final : Expr {
     std::string value;
     explicit IntLiteralExpr(std::string value);
@@ -95,6 +101,9 @@ struct Stmt : Node {
     virtual bool usesFmt() const;
 };
 
+/* Blocks and statements know whether they need fmt so the generator can avoid
+ * importing fmt when the program does not print anything.
+ */
 struct Block final : Node {
     std::vector<std::unique_ptr<Stmt>> statements;
 

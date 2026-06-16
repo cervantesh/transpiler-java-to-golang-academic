@@ -9,6 +9,7 @@ std::string GoGenerator::generate(const Program& program) const {
     std::ostringstream out;
     out << "package main\n\n";
 
+    /* fmt is emitted only when a PrintStmt exists somewhere in the AST. */
     if (program.usesFmt()) {
         out << "import \"fmt\"\n\n";
     }
@@ -24,6 +25,7 @@ std::string GoGenerator::generate(const Program& program) const {
 void GoGenerator::emitMethod(std::ostream& out, const MethodDecl& method) const {
     out << "func " << method.name << "(";
 
+    /* Java main receives String[] args; Go main must not receive parameters. */
     if (method.name != "main") {
         for (size_t index = 0; index < method.params.size(); ++index) {
             if (index > 0) {
@@ -98,6 +100,7 @@ void GoGenerator::emitStmt(std::ostream& out, const Stmt& stmt, int indentLevel)
     }
 
     if (const auto* whileStmt = dynamic_cast<const WhileStmt*>(&stmt)) {
+        /* Go has no while keyword; the equivalent form is for <condition>. */
         out << padding << "for " << emitExpr(*whileStmt->condition) << " {\n";
         emitBlock(out, *whileStmt->body, indentLevel + 1);
         out << padding << "}\n";

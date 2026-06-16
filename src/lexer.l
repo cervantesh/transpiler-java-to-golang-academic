@@ -4,6 +4,13 @@
 %option yylineno
 
 %{
+/*
+ * Flex scanner for the academic Java subset.
+ *
+ * The scanner recognizes only the tokens that the Bison grammar supports.
+ * It also records line/column positions so syntax errors can point to the
+ * original Java source location.
+ */
 #include "parser.hpp"
 
 #include <cstdlib>
@@ -11,6 +18,9 @@
 
 static int currentColumn = 1;
 
+/* Bison owns semantic token values, so token text is copied with malloc and
+ * later released in parser.y after the AST node takes the string value.
+ */
 static char* duplicateText(const char* text) {
     const size_t length = std::strlen(text) + 1;
     char* copy = static_cast<char*>(std::malloc(length));
@@ -34,6 +44,7 @@ string_literal  \"([^\\\"\n]|\\.)*\"
 
 %%
 
+    /* Whitespace and comments are ignored, but newlines still reset column state. */
 [ \t\r]+                    ;
 \n                          { currentColumn = 1; }
 "//"[^\n]*                  ;
@@ -45,6 +56,7 @@ string_literal  \"([^\\\"\n]|\\.)*\"
                                 }
                             }
 
+    /* Java keywords supported by the academic grammar. */
 "public"                    return PUBLIC;
 "static"                    return STATIC;
 "class"                     return CLASS;
@@ -61,6 +73,7 @@ string_literal  \"([^\\\"\n]|\\.)*\"
 "false"                     return FALSE;
 "System.out.println"        return PRINTLN;
 
+    /* Multi-character operators must be matched before their one-character parts. */
 "&&"                        return AND;
 "||"                        return OR;
 "=="                        return EQ;
@@ -73,6 +86,7 @@ string_literal  \"([^\\\"\n]|\\.)*\"
 {string_literal}            { yylval.text = duplicateText(yytext); return STRING_LITERAL; }
 {identifier}                { yylval.text = duplicateText(yytext); return IDENTIFIER; }
 
+    /* Punctuation and single-character operators are returned as literal tokens. */
 "{"                         return '{';
 "}"                         return '}';
 "("                         return '(';

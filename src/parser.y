@@ -1,4 +1,11 @@
 %{
+/*
+ * Bison parser for the academic Java subset.
+ *
+ * The grammar builds a C++ AST instead of emitting Go directly. Keeping parser
+ * and generator separate makes the compiler pipeline easier to explain and
+ * keeps target-language details out of grammar rules.
+ */
 #include "ast.hpp"
 #include "parser_driver.hpp"
 
@@ -20,6 +27,9 @@ void yyerror(const char* message);
 namespace {
 std::unique_ptr<jtg::Program> parsedProgram;
 
+/* Flex allocates token text with malloc. Convert it to std::string and release
+ * the C allocation as soon as the parser action consumes the token.
+ */
 std::string takeText(char* value) {
     std::string result(value);
     std::free(value);
@@ -50,6 +60,10 @@ std::unique_ptr<T> own(T* value) {
 %locations
 %define parse.error detailed
 
+/* Raw pointers are used inside the Bison union because classic Bison semantic
+ * values are C-compatible. Each action immediately wraps completed nodes in
+ * std::unique_ptr before storing them in the AST.
+ */
 %union {
     char* text;
     jtg::TypeName* type;
@@ -92,6 +106,9 @@ std::unique_ptr<T> own(T* value) {
 
 %%
 
+/* A v1 program is a single public Java class that acts as a container for
+ * static methods. The class itself is not emitted as a Go type.
+ */
 program
     : PUBLIC CLASS IDENTIFIER '{' method_list '}'
       {
@@ -100,6 +117,7 @@ program
       }
     ;
 
+/* Methods are emitted as package-level Go functions. */
 method_list
     : method_decl
       {
@@ -113,6 +131,9 @@ method_list
       }
     ;
 
+/* main(String[] args) is accepted, but the Go generator intentionally drops the
+ * args parameter because Go's func main does not accept parameters.
+ */
 method_decl
     : PUBLIC STATIC return_type IDENTIFIER '(' param_list_opt ')' block
       {
@@ -128,6 +149,7 @@ method_decl
       }
     ;
 
+/* Only primitive Java types and String are supported by the academic subset. */
 return_type
     : type { $$ = $1; }
     | VOID { $$ = new jtg::TypeName(jtg::TypeName::Void()); }
@@ -198,6 +220,9 @@ stmt_list
       }
     ;
 
+/* Statements are kept intentionally small: declarations, assignments, calls,
+ * printing, returns, and structured control flow.
+ */
 stmt
     : var_decl ';' { $$ = $1; }
     | assign_stmt ';' { $$ = $1; }
@@ -228,6 +253,7 @@ assign_stmt
       }
     ;
 
+/* A call statement supports static void helper methods such as greet();. */
 expr_stmt
     : IDENTIFIER '(' arg_list_opt ')'
       {
@@ -290,6 +316,9 @@ arg_list
       }
     ;
 
+/* Expressions cover literals, identifiers, simple calls, unary operations, and
+ * binary operations. Operator precedence is declared above with Bison %left/%right.
+ */
 expr
     : INT_LITERAL
       {

@@ -4,6 +4,13 @@ Academic Java-to-Go transpiler built with Flex, Bison, C++, and Go tooling.
 
 This repository is written as a class project submission. Its purpose is not to replace a production Java compiler, but to demonstrate practical knowledge of lexical analysis, parsing, abstract syntax trees, code generation, and compiler-style verification.
 
+## Documentation Map
+
+- [Architecture](docs/architecture.md): explains the compiler pipeline and source modules.
+- [Diagnostics](docs/diagnostics.md): documents unsupported-feature diagnostic codes.
+- [Test Cases](docs/test-cases.md): lists the 30 evidence cases.
+- [Verification Evidence](docs/evidence/verification-2026-06-16.md): records the latest reproducible test output.
+
 ## Project Objective
 
 The project translates a small, controlled subset of Java into valid Go code.
@@ -54,8 +61,11 @@ This is intentionally academic. A production Java-to-Go migration tool would nee
 |-- build.ps1                  Windows build script
 |-- Makefile                   Make-style build for compatible environments
 |-- README.md                  Project explanation and usage
+|-- .gitattributes             Line-ending rules for generated/reviewed text files
 |-- docs/
+|   |-- architecture.md
 |   |-- diagnostics.md
+|   |-- test-cases.md
 |   `-- evidence/
 |       `-- verification-2026-06-16.md
 |-- examples/

@@ -12,6 +12,10 @@
 namespace jtg {
 namespace {
 
+/* The diagnostics pass runs before Flex/Bison. It is deliberately conservative:
+ * it recognizes common unsupported Java features and stops before the parser
+ * could produce misleading Go output.
+ */
 struct Line {
     int number;
     std::string text;
@@ -125,6 +129,9 @@ std::string maskCommentsAndLiterals(const std::string& source) {
     return masked;
 }
 
+/* Comments and string/char literals are masked before scanning so words like
+ * "class" or "try" inside comments do not create false diagnostics.
+ */
 std::vector<Line> splitLines(const std::string& source) {
     std::vector<Line> lines;
     std::istringstream stream(source);
@@ -189,6 +196,9 @@ void addDiagnostic(
     });
 }
 
+/* braceDepth lets the scanner distinguish class-level declarations from method
+ * body statements well enough for academic unsupported-feature diagnostics.
+ */
 int braceDelta(const std::string& line) {
     int delta = 0;
     for (char value : line) {
