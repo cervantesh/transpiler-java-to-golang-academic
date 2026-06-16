@@ -22,7 +22,7 @@ void writeFile(const std::string& path, const std::string& contents) {
 
 int main(int argc, char** argv) {
     if (argc != 3) {
-        std::cerr << "transpiler-java-to-golang-academic\n";
+        std::cerr << "cervo-transpiler-java-to-go\n";
         std::cerr << "usage: javago <input.java> <output.go>\n";
         return 64;
     }

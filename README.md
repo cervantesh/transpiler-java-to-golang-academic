@@ -1,4 +1,4 @@
-# transpiler-java-to-golang-academic
+# cervo-transpiler-java-to-go
 
 Academic Java-to-Go transpiler built with Flex, Bison, C++, and Go tooling.
 
@@ -56,6 +56,7 @@ This is intentionally academic. A production Java-to-Go migration tool would nee
 |-- README.md                  Project explanation and usage
 |-- docs/
 |   |-- ai-assisted-migration.md
+|   |-- diagnostics.md
 |   `-- evidence/
 |       `-- verification-2026-06-16.md
 |-- examples/
@@ -64,6 +65,7 @@ This is intentionally academic. A production Java-to-Go migration tool would nee
 |   |-- lexer.l                Flex lexer
 |   |-- parser.y               Bison parser
 |   |-- ast.hpp / ast.cpp      AST node model
+|   |-- diagnostics.hpp / .cpp Unsupported-feature diagnostics
 |   |-- generator.hpp / .cpp   AST-to-Go code generator
 |   |-- parser_driver.hpp      Parser facade
 |   `-- main.cpp               CLI entry point
@@ -105,6 +107,8 @@ The current version supports:
   - `/* ... */`
 
 Unsupported features include objects, `new`, inheritance, interfaces, packages, imports, class fields, general arrays, exceptions, generics, lambdas, annotations, overloading, reflection, and Java standard-library translation.
+
+Unsupported features are detected before parsing when possible and reported as structured `JTG` diagnostics with line, column, feature name, and recommendation. See [docs/diagnostics.md](docs/diagnostics.md).
 
 ## Translation Rules
 
@@ -193,8 +197,10 @@ Manual equivalent:
 ```powershell
 bison -d -o build\parser.cpp src\parser.y
 flex -o build\lexer.cpp src\lexer.l
-g++ -std=c++17 -Isrc -Ibuild build\parser.cpp build\lexer.cpp src\ast.cpp src\generator.cpp src\main.cpp -o build\javago.exe
+g++ -std=c++17 -Isrc -Ibuild build\parser.cpp build\lexer.cpp src\ast.cpp src\diagnostics.cpp src\generator.cpp src\main.cpp -o build\javago.exe
 ```
+
+The full build script also compiles `src\diagnostics.cpp`; use `.\build.ps1` as the source of truth for local builds.
 
 If `flex` or `bison` is missing, install WinFlexBison:
 
@@ -238,6 +244,7 @@ The test runner:
 - Compares generated Go against `tests/expected`.
 - Runs generated Go programs with `go run`.
 - Verifies syntax errors include line and column details.
+- Verifies unsupported Java features fail with structured `JTG` diagnostics and recommendations.
 
 ## Verification Evidence
 
@@ -251,7 +258,7 @@ That file records the tool versions, build output, golden-test output, manual te
 
 This project is intentionally small. It does not perform full Java semantic analysis, classpath resolution, object modeling, method overload resolution, or library migration.
 
-Examples of unsupported input should fail with a parser error instead of producing misleading Go code. For example, class fields are rejected in the current grammar.
+Examples of unsupported input should fail with a structured diagnostic or parser error instead of producing misleading Go code. For example, class fields are rejected before parsing with `JTG1016`.
 
 ## AI-Assisted Migration Note
 

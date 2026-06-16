@@ -246,9 +246,9 @@ Each prompt should include:
 
 ## Implementation Order
 
-1. Add structured diagnostics for unsupported Java features.
+1. Add structured diagnostics for unsupported Java features. Completed in `src\diagnostics.hpp`, `src\diagnostics.cpp`, and `docs\diagnostics.md`.
 2. Add `--report` that emits deterministic Markdown and JSON.
-3. Add fixture coverage for unsupported features.
+3. Add fixture coverage for unsupported features. Completed for the first diagnostic set in `tests\fixtures\unsupported_*.java` and `test.ps1`.
 4. Add `docs/ai-prompts.md` with prompt templates.
 5. Add an offline AI provider that reads canned responses for tests.
 6. Add an optional script or CLI flag for real AI suggestions.
