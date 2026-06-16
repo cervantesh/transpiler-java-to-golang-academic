@@ -239,12 +239,15 @@ Run the golden-test suite:
 The test runner:
 
 - Rebuilds the transpiler.
+- Executes exactly 30 evidence cases.
 - Transpiles Java fixtures from `tests/fixtures`.
 - Formats generated Go with `gofmt`.
 - Compares generated Go against `tests/expected`.
 - Runs generated Go programs with `go run`.
 - Verifies syntax errors include line and column details.
 - Verifies unsupported Java features fail with structured `JTG` diagnostics and recommendations.
+
+The 30-case suite includes 20 supported Java-to-Go translations, one syntax-error case, and nine unsupported-feature diagnostics.
 
 ## Verification Evidence
 

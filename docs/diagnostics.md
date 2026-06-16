@@ -50,6 +50,10 @@ error: tests\fixtures\unsupported_field.java:2:5: JTG1016: unsupported feature: 
 - `tests\fixtures\unsupported_exception.java`
 - `tests\fixtures\unsupported_instance_method.java`
 - `tests\fixtures\unsupported_overload.java`
+- `tests\fixtures\unsupported_interface.java`
+- `tests\fixtures\unsupported_inheritance.java`
+- `tests\fixtures\unsupported_generics.java`
+- `tests\fixtures\unsupported_array_indexing.java`
 
 Each fixture must fail before Go output is written and must include:
 

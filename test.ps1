@@ -21,15 +21,30 @@ function Invoke-Checked {
 & (Join-Path $Root "build.ps1")
 New-Item -ItemType Directory -Force $GeneratedDir | Out-Null
 
-$Cases = @(
+$SupportedCases = @(
     "hello_print",
     "variables",
     "if_else",
     "while_loop",
-    "method_return"
+    "method_return",
+    "arithmetic_precedence",
+    "parenthesized_expression",
+    "unary_minus",
+    "boolean_and_or",
+    "boolean_not",
+    "equality_inequality",
+    "comparison_bounds",
+    "string_variable",
+    "double_arithmetic",
+    "comments_handling",
+    "no_fmt_import",
+    "return_without_value",
+    "static_void_method_call",
+    "nested_control",
+    "multiple_parameters"
 )
 
-foreach ($Case in $Cases) {
+foreach ($Case in $SupportedCases) {
     $InputPath = Join-Path $Root "tests\fixtures\$Case.java"
     $Actual = Join-Path $GeneratedDir "$Case.go"
     $Expected = Join-Path $Root "tests\expected\$Case.go"
@@ -68,7 +83,11 @@ $UnsupportedCases = @(
     @{ Name = "unsupported_package_import"; Code = "JTG1001"; Feature = "package declarations" },
     @{ Name = "unsupported_exception"; Code = "JTG1007"; Feature = "try/catch exceptions" },
     @{ Name = "unsupported_instance_method"; Code = "JTG1017"; Feature = "instance methods" },
-    @{ Name = "unsupported_overload"; Code = "JTG1018"; Feature = "method overloading" }
+    @{ Name = "unsupported_overload"; Code = "JTG1018"; Feature = "method overloading" },
+    @{ Name = "unsupported_interface"; Code = "JTG1003"; Feature = "interfaces" },
+    @{ Name = "unsupported_inheritance"; Code = "JTG1004"; Feature = "inheritance" },
+    @{ Name = "unsupported_generics"; Code = "JTG1014"; Feature = "generics" },
+    @{ Name = "unsupported_array_indexing"; Code = "JTG1015"; Feature = "arrays and indexing" }
 )
 
 foreach ($Case in $UnsupportedCases) {
@@ -99,3 +118,10 @@ foreach ($Case in $UnsupportedCases) {
 
     Write-Host "PASS $($Case.Name)"
 }
+
+$TotalCases = $SupportedCases.Count + 1 + $UnsupportedCases.Count
+if ($TotalCases -ne 30) {
+    Write-Error "Expected exactly 30 evidence cases, got $TotalCases"
+}
+
+Write-Host "PASS evidence_case_count => $TotalCases"

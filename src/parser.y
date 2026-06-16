@@ -73,7 +73,7 @@ std::unique_ptr<T> own(T* value) {
 %type <params> param_list param_list_opt
 %type <expr> expr
 %type <exprs> arg_list arg_list_opt
-%type <stmt> stmt var_decl assign_stmt print_stmt return_stmt if_stmt while_stmt
+%type <stmt> stmt var_decl assign_stmt expr_stmt print_stmt return_stmt if_stmt while_stmt
 %type <stmts> stmt_list
 %type <block> block
 %type <method> method_decl
@@ -201,6 +201,7 @@ stmt_list
 stmt
     : var_decl ';' { $$ = $1; }
     | assign_stmt ';' { $$ = $1; }
+    | expr_stmt ';' { $$ = $1; }
     | print_stmt ';' { $$ = $1; }
     | return_stmt ';' { $$ = $1; }
     | if_stmt { $$ = $1; }
@@ -224,6 +225,14 @@ assign_stmt
     : IDENTIFIER '=' expr
       {
           $$ = new jtg::AssignStmt(takeText($1), own($3));
+      }
+    ;
+
+expr_stmt
+    : IDENTIFIER '(' arg_list_opt ')'
+      {
+          $$ = new jtg::ExprStmt(std::make_unique<jtg::CallExpr>(takeText($1), std::move(*$3)));
+          delete $3;
       }
     ;
 

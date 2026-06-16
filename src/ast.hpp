@@ -117,6 +117,12 @@ struct AssignStmt final : Stmt {
     AssignStmt(std::string name, std::unique_ptr<Expr> value);
 };
 
+struct ExprStmt final : Stmt {
+    std::unique_ptr<Expr> expr;
+
+    explicit ExprStmt(std::unique_ptr<Expr> expr);
+};
+
 struct PrintStmt final : Stmt {
     std::unique_ptr<Expr> value;
 

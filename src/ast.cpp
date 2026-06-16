@@ -80,6 +80,9 @@ VarDecl::VarDecl(TypeName type, std::string name, std::unique_ptr<Expr> initiali
 AssignStmt::AssignStmt(std::string name, std::unique_ptr<Expr> value)
     : name(std::move(name)), value(std::move(value)) {}
 
+ExprStmt::ExprStmt(std::unique_ptr<Expr> expr)
+    : expr(std::move(expr)) {}
+
 PrintStmt::PrintStmt(std::unique_ptr<Expr> value)
     : value(std::move(value)) {}
 

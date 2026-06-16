@@ -65,6 +65,11 @@ void GoGenerator::emitStmt(std::ostream& out, const Stmt& stmt, int indentLevel)
         return;
     }
 
+    if (const auto* exprStmt = dynamic_cast<const ExprStmt*>(&stmt)) {
+        out << padding << emitExpr(*exprStmt->expr) << "\n";
+        return;
+    }
+
     if (const auto* print = dynamic_cast<const PrintStmt*>(&stmt)) {
         out << padding << "fmt.Println(" << emitExpr(*print->value) << ")\n";
         return;
