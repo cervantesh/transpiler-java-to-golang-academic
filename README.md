@@ -55,7 +55,6 @@ This is intentionally academic. A production Java-to-Go migration tool would nee
 |-- Makefile                   Make-style build for compatible environments
 |-- README.md                  Project explanation and usage
 |-- docs/
-|   |-- ai-assisted-migration.md
 |   |-- diagnostics.md
 |   `-- evidence/
 |       `-- verification-2026-06-16.md
@@ -262,9 +261,3 @@ That file records the tool versions, build output, golden-test output, manual te
 This project is intentionally small. It does not perform full Java semantic analysis, classpath resolution, object modeling, method overload resolution, or library migration.
 
 Examples of unsupported input should fail with a structured diagnostic or parser error instead of producing misleading Go code. For example, class fields are rejected before parsing with `JTG1016`.
-
-## AI-Assisted Migration Note
-
-The transpiler should stay deterministic by default. AI can be added later as an optional sidecar for migration reports, diagnostic explanations, unsupported-code suggestions, golden-test assistance, and idiomatic Go review.
-
-See [docs/ai-assisted-migration.md](docs/ai-assisted-migration.md) for the proposed architecture, guardrails, file layout, and implementation order.

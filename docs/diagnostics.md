@@ -2,7 +2,7 @@
 
 The transpiler runs a deterministic unsupported-feature scan before invoking the Flex/Bison parser.
 
-This scan is intentionally not a full Java parser. It exists to turn common out-of-scope Java constructs into stable diagnostics that can be consumed by tests, reports, and the future AI-assisted migration layer.
+This scan is intentionally not a full Java parser. It exists to turn common out-of-scope Java constructs into stable diagnostics that can be consumed by tests and academic evidence reports.
 
 Diagnostic format:
 
@@ -61,4 +61,4 @@ Each fixture must fail before Go output is written and must include:
 - the unsupported feature name
 - a migration recommendation
 
-These diagnostics are the foundation for the AI sidecar described in `docs\ai-assisted-migration.md`.
+These diagnostics make unsupported cases reproducible for grading and classroom presentation.
