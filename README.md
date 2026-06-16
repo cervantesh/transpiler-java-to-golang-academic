@@ -1,4 +1,4 @@
-# cervo-transpiler-java-to-go
+# transpiler-java-to-golang-academic
 
 Academic Java-to-Go transpiler built with Flex, Bison, C++, and Go tooling.
 
